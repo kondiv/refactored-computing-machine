@@ -1,4 +1,5 @@
 ﻿using EmployeesService.App.Domain.Enums;
+using EmployeesService.App.Features.UpdateEmployee;
 
 namespace EmployeesService.App.Domain.Entities;
 
@@ -12,11 +13,11 @@ public class Employee
 
     public string? Patronymic { get; private set; }
 
-    public string Username { get; private init; } = null!;
+    public string Username { get; private set; } = null!;
 
     public Role Role { get; private set; }
 
-    public Employee(string surname, string name, string patronymic, string username, Role role)
+    public Employee(string surname, string name, string? patronymic, string username, Role role)
     {
         Id = Guid.NewGuid();
         Surname = surname;
@@ -24,5 +25,14 @@ public class Employee
         Patronymic = patronymic;
         Username = username;
         Role = role;
+    }
+
+    public void Update(UpdateEmployeeDto updateEmployee)
+    {
+        Surname = updateEmployee.Surname;
+        Name = updateEmployee.Name;
+        Patronymic = updateEmployee.Patronymic;
+        Username = updateEmployee.Username;
+        Role = (Role)Enum.Parse(typeof(Role), updateEmployee.Role);
     }
 }
