@@ -1,0 +1,16 @@
+services:
+
+  employees-service-database:
+    image: postgres:latest
+    container_name: employees-service-database
+    environment:
+      - POSTGRES_USER=developer
+      - POSTGRES_DB=employees
+      - POSTGRES_PASSWORD=developer123!
+    volumes:
+      - employees-service:/var/lib/postgres/data/
+    ports:
+      - "5432:5432"
+  
+volumes:
+  employees-service: 
