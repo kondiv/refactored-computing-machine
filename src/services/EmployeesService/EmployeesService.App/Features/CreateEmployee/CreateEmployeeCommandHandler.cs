@@ -48,7 +48,7 @@ internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmplo
                 new CreatedEmployeeDto(
                     employee.Id,
                     employee.Username,
-                    employee.Role,
+                    employee.Role.ToString(),
                     DateTime.UtcNow));
         }
 

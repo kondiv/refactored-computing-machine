@@ -3,6 +3,7 @@ using EmployeesService.App.Domain.ValueTypes.Result.Errors;
 using EmployeesService.App.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 
 namespace EmployeesService.App.Features.GetEmployee;
 
@@ -24,13 +25,15 @@ internal sealed class GetEmployeeRequestHandler : IRequestHandler<GetEmployeeReq
         var employeeDto = await _context
            .Employees
            .Where(e => e.Id == request.Id)
-           .Select(e => new GetEmployeeDto(
-               e.Id,
-               e.Surname,
-               e.Name,
-               e.Patronymic,
-               e.Username,
-               e.Role.ToString()))
+           .Select(e => new GetEmployeeDto
+                {
+                    Id = e.Id,
+                    Surname = e.Surname,
+                    Name = e.Name,
+                    Patronymic = e.Patronymic,
+                    Username =e.Username,
+                    Role = e.Role.ToString()
+                })
            .AsNoTracking()
            .FirstOrDefaultAsync(cancellationToken);
 

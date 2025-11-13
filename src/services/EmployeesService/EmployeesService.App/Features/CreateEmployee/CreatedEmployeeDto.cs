@@ -2,4 +2,4 @@
 
 namespace EmployeesService.App.Features.CreateEmployee;
 
-public sealed record CreatedEmployeeDto(Guid Id, string Username, Role Role, DateTime CreatedAtUtc);
+public sealed record CreatedEmployeeDto(Guid Id, string Username, string Role, DateTime CreatedAtUtc);

@@ -31,13 +31,15 @@ internal sealed class ListEmployeesRequestHandler : IRequestHandler<ListEmployee
 
         IReadOnlyList<GetEmployeeDto> employees = await _context
             .Employees
-            .Select(e => new GetEmployeeDto(
-                e.Id,
-                e.Surname,
-                e.Name,
-                e.Patronymic,
-                e.Username,
-                e.Role.ToString()))
+            .Select(e => new GetEmployeeDto
+                {
+                    Id = e.Id,
+                    Surname = e.Surname,
+                    Name = e.Name,
+                    Patronymic = e.Patronymic,
+                    Username = e.Username,
+                    Role = e.Role.ToString()
+                })
             .OrderBy(e => e.Id)
             .Skip((request.Page - 1) * request.MaxPageSize)
             .Take(request.MaxPageSize)

@@ -1,5 +1,24 @@
 services:
 
+  employees-service:
+    image: employees-service:latest
+    container_name: employees-service
+    build:
+      context: .
+      dockerfile: ./src/services/EmployeesService/EmployeesService.App/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=employees-service-database;Port=5432;Database=employees;Username=developer;Password=developer123!
+      - ASPNETCORE_URLS=http://+:5000
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DOTNET_RUNNING_IN_CONTAINER=true
+    expose:
+      - 5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      employees-service-database:
+        condition: service_healthy
+
   employees-service-database:
     image: postgres:latest
     container_name: employees-service-database
@@ -11,6 +30,12 @@ services:
       - employees-service:/var/lib/postgres/data/
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U developer -d employees"]
+      interval: 10s
+      timeout: 20s
+      retries: 5
+      start_period: 20s
   
 volumes:
   employees-service: 

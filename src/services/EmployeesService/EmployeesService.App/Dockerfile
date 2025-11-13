@@ -4,17 +4,16 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app
-EXPOSE 8080
 
 
 # Этот этап используется для сборки проекта службы
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["EmployeesService.App/EmployeesService.App.csproj", "EmployeesService.App/"]
-RUN dotnet restore "./EmployeesService.App/EmployeesService.App.csproj"
+COPY ["src/services/EmployeesService/EmployeesService.App/EmployeesService.App.csproj", "src/services/EmployeesService/EmployeesService.App/"]
+RUN dotnet restore "src/services/EmployeesService/EmployeesService.App/EmployeesService.App.csproj"
 COPY . .
-WORKDIR "/src/EmployeesService.App"
+WORKDIR "/src/src/services/EmployeesService/EmployeesService.App"
 RUN dotnet build "./EmployeesService.App.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Этот этап используется для публикации проекта службы, который будет скопирован на последний этап

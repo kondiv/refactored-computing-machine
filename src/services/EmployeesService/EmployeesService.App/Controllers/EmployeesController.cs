@@ -33,7 +33,7 @@ public class EmployeesController : ControllerBase
         return Ok(await _mediator.Send(request, cancellationToken));
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "GetAsync")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -75,7 +75,7 @@ public class EmployeesController : ControllerBase
 
         if(createResult.Succeeded)
         {
-            return CreatedAtAction(nameof(GetAsync), createResult.Value.Id, createResult.Value);
+            return CreatedAtRoute("GetAsync", new { id = createResult.Value.Id }, createResult.Value);
         }
 
         return createResult.Error.ErrorCode switch

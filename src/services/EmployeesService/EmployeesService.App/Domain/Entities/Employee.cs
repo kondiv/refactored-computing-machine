@@ -5,17 +5,22 @@ namespace EmployeesService.App.Domain.Entities;
 
 public class Employee
 {
-    public Guid Id { get; private init; }
+    public Guid Id { get; init; }
 
-    public string Surname { get; private set; } = null!;
+    public string Surname { get; set; } = null!;
 
-    public string Name { get; private set; } = null!;
+    public string Name { get; set; } = null!;
 
-    public string? Patronymic { get; private set; }
+    public string? Patronymic { get; set; }
 
-    public string Username { get; private set; } = null!;
+    public string Username { get; set; } = null!;
 
-    public Role Role { get; private set; }
+    public Role Role { get; set; }
+
+    public Employee()
+    {
+        
+    }
 
     public Employee(string surname, string name, string? patronymic, string username, Role role)
     {
