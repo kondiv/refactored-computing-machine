@@ -2,6 +2,8 @@ using EmployeesService.App.Infrastructure;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
+// TODO: Handle validation exceptions
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
