@@ -1,6 +1,8 @@
-﻿using EmployeesService.App.Domain.ValueTypes.Result;
+﻿using Contracts.Employees;
+using EmployeesService.App.Domain.ValueTypes.Result;
 using EmployeesService.App.Domain.ValueTypes.Result.Errors;
 using EmployeesService.App.Infrastructure;
+using MassTransit;
 using MediatR;
 
 namespace EmployeesService.App.Features.DeleteEmployee;
@@ -8,11 +10,16 @@ namespace EmployeesService.App.Features.DeleteEmployee;
 internal sealed class DeleteEmployeeCommandHandler : IRequestHandler<DeleteEmployeeCommand, Result>
 {
     private readonly ApplicationContext _context;
+    private readonly IPublishEndpoint _publishEndpoint;
     private readonly ILogger<DeleteEmployeeCommandHandler> _logger;
 
-    public DeleteEmployeeCommandHandler(ApplicationContext context, ILogger<DeleteEmployeeCommandHandler> logger)
+    public DeleteEmployeeCommandHandler(
+        ApplicationContext context,
+        IPublishEndpoint publishEndpoint,
+        ILogger<DeleteEmployeeCommandHandler> logger)
     {
         _context = context;
+        _publishEndpoint = publishEndpoint;
         _logger = logger;
     }
 
@@ -34,7 +41,10 @@ internal sealed class DeleteEmployeeCommandHandler : IRequestHandler<DeleteEmplo
 
         await _context.SaveChangesAsync();
 
+        await _publishEndpoint.Publish(new EmployeeDeleted(employee.Id, DateTime.UtcNow));
+
         _logger.LogInformation("Employee {id} successfully deleted", request.Id);
+
         return Result.Success();
     }
 }

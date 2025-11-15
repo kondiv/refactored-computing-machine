@@ -1,11 +1,9 @@
 ﻿using FluentValidation;
 using MassTransit;
-using TaskManagmentService.App.Features.EmployeeCreatedConsumer;
-using TaskManagmentService.App.Features.EmployeeDeletedConsumer;
 
-namespace TaskManagmentService.App.Extensions;
+namespace EmployeesService.App.Extensions;
 
-internal static class DependecyInjection
+public static class DependencyInjection
 {
     public static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
     {
@@ -13,12 +11,11 @@ internal static class DependecyInjection
         {
             busConfigurator.SetKebabCaseEndpointNameFormatter();
 
-            busConfigurator.AddConsumer<EmployeeCreatedConsumer>();
-            busConfigurator.AddConsumer<EmployeeDeletedConsumer>();
+            busConfigurator.AddConsumers(typeof(Program).Assembly);
 
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {
-                configurator.Host(new Uri(configuration["MessageBroker:Host"]!), h =>
+                configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
                 {
                     h.Username(configuration["MessageBroker:Username"]!);
                     h.Password(configuration["MessageBroker:Password"]!);
@@ -35,6 +32,7 @@ internal static class DependecyInjection
     {
         services.AddMediatR(config =>
             config.RegisterServicesFromAssembly(typeof(Program).Assembly));
+        
         return services;
     }
 

@@ -7,6 +7,9 @@ services:
       context: .
       dockerfile: ./src/services/EmployeesService/EmployeesService.App/Dockerfile
     environment:
+      - MessageBroker__Host=amqp://rabbit-mq:5672
+      - MessageBroker__Username=developer
+      - MessageBroker__Password=developer123!
       - ConnectionStrings__DefaultConnection=Host=employees-service-database;Port=5432;Database=employees;Username=developer;Password=developer123!
       - ASPNETCORE_URLS=http://+:5000
       - ASPNETCORE_ENVIRONMENT=Development
@@ -17,6 +20,8 @@ services:
       - "5000:5000"
     depends_on:
       employees-service-database:
+        condition: service_healthy
+      rabbit-mq:
         condition: service_healthy
 
   task-manager-service:

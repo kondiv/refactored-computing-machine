@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.5" />
     <PackageReference Include="MediatR" Version="13.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.22" />
@@ -26,6 +27,10 @@
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Infrastructure\Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Contracts\Contracts\Contracts.csproj" />
   </ItemGroup>
 
 </Project>

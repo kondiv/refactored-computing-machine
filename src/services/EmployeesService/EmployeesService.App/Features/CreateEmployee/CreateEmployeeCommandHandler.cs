@@ -4,25 +4,29 @@ using EmployeesService.App.Domain.ValueTypes.Result;
 using EmployeesService.App.Domain.ValueTypes.Result.Errors;
 using EmployeesService.App.Infrastructure;
 using FluentValidation;
+using MassTransit;
 using MediatR;
+using Contracts.Employees;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using System.Data.SqlTypes;
 
 namespace EmployeesService.App.Features.CreateEmployee;
 
 internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, Result<CreatedEmployeeDto>>
 {
     private readonly ApplicationContext _context;
+    private readonly IPublishEndpoint _publishEndpoint;
     private readonly IValidator<CreateEmployeeCommand> _validator;
     private readonly ILogger<CreateEmployeeCommandHandler> _logger;
 
     public CreateEmployeeCommandHandler(
         ApplicationContext context,
+        IPublishEndpoint publishEndpoint,
         IValidator<CreateEmployeeCommand> validator,
         ILogger<CreateEmployeeCommandHandler> logger)
     {
         _context = context;
+        _publishEndpoint = publishEndpoint;
         _logger = logger;
         _validator = validator;
     }
@@ -43,6 +47,11 @@ internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmplo
         {
             await _context.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Employee {username} created", request.Username);
+
+            await _publishEndpoint.Publish(new EmployeeCreated(
+                employee.Id,
+                employee.Username,
+                employee.Role.ToString()));
 
             return Result<CreatedEmployeeDto>.Success(
                 new CreatedEmployeeDto(
