@@ -1,7 +1,5 @@
 using EmployeesService.App.Extensions;
 using EmployeesService.App.Infrastructure;
-using FluentValidation;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 // TODO: Handle validation exceptions
