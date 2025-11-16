@@ -53,9 +53,11 @@ internal sealed class CreateAssignmentCommandHandler : IRequestHandler<CreateAss
 
         await _publishEndpoint.Publish(
             new AssignmentCreatedEvent(
+                assingment.Id,
                 assingment.Title,
                 assingment.ProjectId,
                 assingment.AssignmentGroupId,
+                assingment.AssignmentStatus.ToString(),
                 assingment.CreatedAtUtc),
             cancellationToken);
 

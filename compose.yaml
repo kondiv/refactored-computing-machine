@@ -47,6 +47,31 @@ services:
         condition: service_healthy
       rabbit-mq:
         condition: service_healthy
+        
+  project-manager-service:
+    image: project-manager-service:latest
+    container_name: project-manager-service
+    build: 
+      context: .
+      dockerfile: ./src/services/ProjectManagementService/ProjectManagementService.App/Dockerfile
+    environment:
+      - MessageBroker__Host=amqp://rabbit-mq:5672
+      - MessageBroker__Username=developer
+      - MessageBroker__Password=developer123!
+      - ConnectionStrings__DefaultConnection=Host=project-manager-service-database;Port=5432;Database=projects;Username=developer;Password=developer123!
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5002
+    expose:
+      - 5002
+    ports:
+      - "5002:5002"
+    depends_on:
+      project-manager-service-database:
+        condition: service_healthy
+      rabbit-mq:
+        condition: service_healthy
+    
 
   employees-service-database:
     image: postgres:latest
@@ -78,7 +103,25 @@ services:
     ports:
       - "5433:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U developer -d employees"]
+      test: ["CMD-SHELL", "pg_isready -U developer -d assignments"]
+      interval: 10s
+      timeout: 20s
+      retries: 5
+      start_period: 20s
+
+  project-manager-service-database:
+    image: postgres:latest
+    container_name: project-manager-service-database
+    environment:
+      - POSTGRES_USER=developer
+      - POSTGRES_DB=projects
+      - POSTGRES_PASSWORD=developer123!
+    volumes:
+      - project-manager-service:/var/lib/postgresql/data/
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U developer -d projects"]
       interval: 10s
       timeout: 20s
       retries: 5
@@ -103,4 +146,5 @@ services:
 volumes:
   employees-service: 
   task-manager-service:
+  project-manager-service:
   rabbit-mq-data:
