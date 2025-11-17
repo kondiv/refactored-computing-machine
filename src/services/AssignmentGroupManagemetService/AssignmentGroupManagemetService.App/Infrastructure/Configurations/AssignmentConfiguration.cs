@@ -12,11 +12,6 @@ internal sealed class AssignmentConfiguration : IEntityTypeConfiguration<Assignm
 
         builder.Property(a => a.Status).HasMaxLength(64);
 
-        builder
-            .HasOne<AssignmentGroup>()
-            .WithMany()
-            .HasForeignKey(a => a.AssignmentGroupId);
-
         builder.HasData(GenerateAssignmentsList());
     }
 
