@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TaskManagmentService.App.Exceptions;
 using TaskManagmentService.App.Extensions;
 using TaskManagmentService.App.Infrastructure;
 
@@ -6,6 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ServiceContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddProblemDetails();
+
+builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
 
 builder.Services.AddFluentValidation();
 
@@ -35,5 +40,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapControllers();
+
+app.UseExceptionHandler();
 
 app.Run();
