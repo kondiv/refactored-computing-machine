@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using Contracts.Project;
+using MassTransit;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementService.App.Domain.ValueTypes.Result;
 using ProjectManagementService.App.Domain.ValueTypes.Result.Errors;
@@ -9,11 +11,16 @@ namespace ProjectManagementService.App.Features.DeleteProject;
 internal sealed class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand, Result>
 {
     private readonly ServiceContext _context;
+    private readonly IPublishEndpoint _publishEndpoint;
     private readonly ILogger<DeleteProjectCommandHandler> _logger;
 
-    public DeleteProjectCommandHandler(ServiceContext context, ILogger<DeleteProjectCommandHandler> logger)
+    public DeleteProjectCommandHandler(
+        ServiceContext context,
+        IPublishEndpoint publishEndpoint,
+        ILogger<DeleteProjectCommandHandler> logger)
     {
         _context = context;
+        _publishEndpoint = publishEndpoint;
         _logger = logger;
     }
 
@@ -31,10 +38,15 @@ internal sealed class DeleteProjectCommandHandler : IRequestHandler<DeleteProjec
             return Result.Failure(new DbUpdateError("Cannot delete project. Try to cancel or delete assignments first"));
         }
 
-        await _context
+        var affectedRows = await _context
             .Projects
             .Where(p => p.Id == request.Id)
             .ExecuteDeleteAsync(cancellationToken);
+
+        if(affectedRows != 0)
+        {
+            await _publishEndpoint.Publish(new ProjectDeleted(request.Id, DateTime.UtcNow));
+        }
 
         return Result.Success();
     }

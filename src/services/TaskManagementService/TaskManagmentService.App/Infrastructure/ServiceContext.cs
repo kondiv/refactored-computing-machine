@@ -11,6 +11,10 @@ internal sealed class ServiceContext : DbContext
 
     public DbSet<AssignmentEmployee> AssignmentEmployees => Set<AssignmentEmployee>();
 
+    public DbSet<AssignmentGroup> AssignmentGroups => Set<AssignmentGroup>();
+    
+    public DbSet<Project> Projects => Set<Project>();
+
     public ServiceContext(DbContextOptions<ServiceContext> options)
         : base(options)
     {

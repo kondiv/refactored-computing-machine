@@ -8,22 +8,11 @@ internal sealed class AssignmentEmployeeConfiguration : IEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<AssignmentEmployee> builder)
     {
-        builder.ToTable("assignment_employee");
-
         builder.HasKey(ae => new { ae.AssignmentId, ae.EmployeeId });
 
         builder
-            .Property(ae => ae.EmployeeId)
-            .HasColumnName("employee_id");
-
-        builder
-            .Property(ae => ae.AssignmentId)
-            .HasColumnName("assignment_id");
-
-        builder
             .Property(ae => ae.AssignmentRole)
-            .HasConversion<string>()
-            .HasColumnName("assignment_role");
+            .HasConversion<string>();
 
         builder
             .HasOne(ae => ae.Assignment)

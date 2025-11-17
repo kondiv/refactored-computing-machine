@@ -8,24 +8,19 @@ internal sealed class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
 {
     public void Configure(EntityTypeBuilder<Employee> builder)
     {
-        builder.ToTable("employee");
-
         builder.HasKey(e => e.Id);
 
         builder
             .Property(e => e.Id)
-            .ValueGeneratedNever()
-            .HasColumnName("id");
+            .ValueGeneratedNever();
 
         builder
             .Property(e => e.Username)
-            .HasMaxLength(64)
-            .HasColumnName("username");
+            .HasMaxLength(64);
 
         builder
             .Property(e => e.Role)
-            .HasMaxLength(64)
-            .HasColumnName("role");
+            .HasMaxLength(64);
 
         builder.HasData(GenerateEmployeesList());
     }

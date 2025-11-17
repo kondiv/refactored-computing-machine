@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using Contracts.Project;
+using MassTransit;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementService.App.Domain.Entities;
 using ProjectManagementService.App.Domain.ValueTypes.Result;
@@ -10,11 +12,16 @@ namespace ProjectManagementService.App.Features.CreateProject;
 internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, Result<CreatedProjectDto>>
 {
     private readonly ServiceContext _context;
+    private readonly IPublishEndpoint _publishEndpoint;
     private readonly ILogger<CreateProjectCommandHandler> _logger;
 
-    public CreateProjectCommandHandler(ServiceContext context, ILogger<CreateProjectCommandHandler> logger)
+    public CreateProjectCommandHandler(
+        ServiceContext context,
+        IPublishEndpoint publishEndpoint,
+        ILogger<CreateProjectCommandHandler> logger)
     {
         _context = context;
+        _publishEndpoint = publishEndpoint;
         _logger = logger;
     }
 
@@ -55,6 +62,8 @@ internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjec
             .AddAsync(project, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        await _publishEndpoint.Publish(new ProjectCreated(project.Id, DateTime.UtcNow));
 
         return Result<CreatedProjectDto>.Success(new CreatedProjectDto(
             project.Id,

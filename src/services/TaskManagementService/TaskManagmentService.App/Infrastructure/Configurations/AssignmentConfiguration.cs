@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.IdentityModel.Tokens;
 using TaskManagmentService.App.Domain.Entities;
 
 namespace TaskManagmentService.App.Infrastructure.Configurations;
@@ -9,55 +8,48 @@ internal sealed class AssignmentConfiguration : IEntityTypeConfiguration<Assignm
 {
     public void Configure(EntityTypeBuilder<Assignment> builder)
     {
-        builder.ToTable("assignment");
-
         builder.HasKey(a => a.Id);
 
         builder
             .Property(a => a.Id)
-            .ValueGeneratedNever()
-            .HasColumnName("id");
+            .ValueGeneratedNever();
 
         builder
             .Property(a => a.Title)
-            .HasMaxLength(128)
-            .HasColumnName("title");
+            .HasMaxLength(128);
 
         builder
             .Property(a => a.Description)
-            .HasMaxLength(512)
-            .HasColumnName("description");
-
-        builder
-            .Property(a => a.ProjectId)
-            .ValueGeneratedNever()
-            .HasColumnName("project_id");
-
-        builder
-            .Property(a => a.AssignmentGroupId)
-            .ValueGeneratedNever()
-            .HasColumnName("assignment_group_id");
+            .HasMaxLength(512);
 
         builder
             .Property(a => a.DeadlineUtc)
-            .ValueGeneratedNever()
-            .HasColumnName("deadline_utc");
+            .ValueGeneratedNever();
 
         builder
             .Property(a => a.CreatedAtUtc)
-            .HasDefaultValueSql("now()")
-            .HasColumnName("created_at_utc");
+            .HasDefaultValueSql("now()");
 
         builder
             .Property(a => a.AssignmentStatus)
             .HasConversion<string>()
-            .HasColumnName("assignment_status")
             .IsConcurrencyToken();
 
         builder
+            .HasOne<Project>()
+            .WithMany()
+            .HasForeignKey(a => a.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .HasOne<AssignmentGroup>()
+            .WithMany()
+            .HasForeignKey(a => a.AssignmentGroupId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder
             .Property(a => a.Priority)
-            .HasConversion<string>()
-            .HasColumnName("priority");
+            .HasConversion<string>();
 
         builder
             .Ignore(a => a.Observers)

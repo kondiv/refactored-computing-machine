@@ -1,6 +1,6 @@
+using AssignmentGroupManagemetService.App.Extensions;
+using AssignmentGroupManagemetService.App.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ProjectManagementService.App.Extensions;
-using ProjectManagementService.App.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,8 +32,6 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<ServiceContext>();
     context.Database.Migrate();
 }
-
-app.UseAuthorization();
 
 app.MapControllers();
 

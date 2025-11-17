@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskManagmentService.App.Infrastructure;
@@ -11,9 +12,11 @@ using TaskManagmentService.App.Infrastructure;
 namespace TaskManagmentService.App.Infrastructure.Migrations
 {
     [DbContext(typeof(ServiceContext))]
-    partial class ServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20251116165043_Final")]
+    partial class Final
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,10 +64,6 @@ namespace TaskManagmentService.App.Infrastructure.Migrations
                         .HasColumnType("character varying(128)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AssignmentGroupId");
-
-                    b.HasIndex("ProjectId");
 
                     b.ToTable("Assignments");
 
@@ -460,7 +459,7 @@ namespace TaskManagmentService.App.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AssignmentGroups");
+                    b.ToTable("AssignmentGroup");
 
                     b.HasData(
                         new
@@ -695,7 +694,7 @@ namespace TaskManagmentService.App.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Project");
 
                     b.HasData(
                         new
@@ -778,21 +777,6 @@ namespace TaskManagmentService.App.Infrastructure.Migrations
                         {
                             Id = new Guid("22222222-2222-2222-2222-222222222220")
                         });
-                });
-
-            modelBuilder.Entity("TaskManagmentService.App.Domain.Entities.Assignment", b =>
-                {
-                    b.HasOne("TaskManagmentService.App.Domain.Entities.AssignmentGroup", null)
-                        .WithMany()
-                        .HasForeignKey("AssignmentGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TaskManagmentService.App.Domain.Entities.Project", null)
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("TaskManagmentService.App.Domain.Entities.AssignmentEmployee", b =>

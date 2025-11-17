@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using MassTransit;
-using TaskManagmentService.App.Features.EmployeeCreatedConsumer;
-using TaskManagmentService.App.Features.EmployeeDeletedConsumer;
+using TaskManagmentService.App.Consumers;
 
 namespace TaskManagmentService.App.Extensions;
 
@@ -15,6 +14,10 @@ internal static class DependecyInjection
 
             busConfigurator.AddConsumer<EmployeeCreatedConsumer>();
             busConfigurator.AddConsumer<EmployeeDeletedConsumer>();
+            busConfigurator.AddConsumer<AssignmentGroupCreatedConsumer>();
+            busConfigurator.AddConsumer<AssignmentGroupDeletedConsumer>();
+            busConfigurator.AddConsumer<ProjectCreatedConsumer>();
+            busConfigurator.AddConsumer<ProjectDeletedConsumer>();
 
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {
@@ -22,6 +25,36 @@ internal static class DependecyInjection
                 {
                     h.Username(configuration["MessageBroker:Username"]!);
                     h.Password(configuration["MessageBroker:Password"]!);
+                });
+
+                configurator.ReceiveEndpoint("task-management-service-employee-created", e =>
+                {
+                    e.ConfigureConsumer<EmployeeCreatedConsumer>(context);
+                });
+                
+                configurator.ReceiveEndpoint("task-management-service-employee-deleted", e =>
+                {
+                    e.ConfigureConsumer<EmployeeDeletedConsumer>(context);
+                });
+
+                configurator.ReceiveEndpoint("task-management-service-assignment-group-created", e =>
+                {
+                    e.ConfigureConsumer<AssignmentGroupCreatedConsumer>(context);
+                });
+
+                configurator.ReceiveEndpoint("task-management-service-assignment-group-deleted", e =>
+                {
+                    e.ConfigureConsumer<AssignmentGroupDeletedConsumer>(context);
+                });
+
+                configurator.ReceiveEndpoint("task-management-service-project-created", e =>
+                {
+                    e.ConfigureConsumer<ProjectCreatedConsumer>(context);
+                });
+                
+                configurator.ReceiveEndpoint("task-management-service-project-deleted", e =>
+                {
+                    e.ConfigureConsumer<ProjectDeletedConsumer>(context);
                 });
 
                 configurator.ConfigureEndpoints(context);
