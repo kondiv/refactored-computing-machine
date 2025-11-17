@@ -1,3 +1,4 @@
+using EmployeesService.App.Exceptions;
 using EmployeesService.App.Extensions;
 using EmployeesService.App.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddProblemDetails();
+
+builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
 
 builder.Services.AddFluentValidation();
 
@@ -35,8 +40,8 @@ using (var scope = app.Services.CreateScope())
     context.Database.Migrate();
 }
 
-app.UseAuthorization();
-
 app.MapControllers();
+
+app.UseExceptionHandler();
 
 app.Run();

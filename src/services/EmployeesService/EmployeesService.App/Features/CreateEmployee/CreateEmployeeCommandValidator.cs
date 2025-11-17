@@ -42,6 +42,11 @@ internal sealed class CreateEmployeeCommandValidator : AbstractValidator<CreateE
 
     private static bool BeValidName(string name)
     {
+        if(string.IsNullOrEmpty(name))
+        {
+            return false;
+        }
+
         bool startsWithUpperCaseLetter = char.IsUpper(name[0]);
 
         bool containsOnlyLetters = name.All(char.IsLetter);
